@@ -3,11 +3,11 @@
 
 #define TEST_FILE "input.txt"
 
-int *left_side = NULL;
-int *right_side = NULL;
+int* left_side = NULL;
+int* right_side = NULL;
 int numbers = 0;
 
-void create_arrays(FILE *file) {
+void create_arrays(FILE* file) {
     int num1, num2;
     numbers = 0;
     while (fscanf(file, "%d %d", &num1, &num2) == 2) {
@@ -23,7 +23,7 @@ void create_arrays(FILE *file) {
     }
 }
 
-void add_numbers(FILE *file) {
+void add_numbers(FILE* file) {
     int num1, num2;
     int index = 0;
     while (fscanf(file, "%d %d", &num1, &num2) == 2) {
@@ -33,17 +33,34 @@ void add_numbers(FILE *file) {
     }
 }
 
-int compare_ints(const void *a, const void *b) { // ascending order
-    int arg1 = *(const int *)a;
-    int arg2 = *(const int *)b;
+int compare_ints(const void* a, const void* b) {
+    // ascending order
+    int arg1 = *(const int*)a;
+    int arg2 = *(const int*)b;
 
     if (arg1 < arg2) return -1;
     if (arg1 > arg2) return 1;
     return 0;
 }
 
+int similarity_score() {
+    int score = 0;
+
+    for (int i = 0; i < numbers; i++) {
+        int similarity_count = 0;
+
+        for (int j = 0; j < numbers; j++) {
+            if (left_side[i] == right_side[j]) {
+                similarity_count++;
+            }
+        }
+        score += left_side[i] * similarity_count;
+    }
+    return score;
+}
+
 int main(void) {
-    FILE *file = fopen(TEST_FILE, "r");
+    FILE* file = fopen(TEST_FILE, "r");
     int total_distance = 0;
 
     create_arrays(file);
@@ -59,11 +76,13 @@ int main(void) {
         total_distance += distance;
     }
 
-    for (int i = 0; i < numbers; i++) {
-        printf("Read numbers: %d and %d\n", left_side[i], right_side[i]);
-    }
+    // for (int i = 0; i < numbers; i++) {
+    //     printf("%d and %d\n", left_side[i], right_side[i]);
+    // }
 
-    printf("%d\n", total_distance);
+    int total_score = similarity_score();
+    printf("Total distance: %d\n", total_distance);
+    printf("Total score: %d\n", total_score);
 
     free(left_side);
     free(right_side);
