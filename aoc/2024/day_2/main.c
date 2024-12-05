@@ -15,15 +15,31 @@ int check_safe(char *lines) {
         token = strtok(NULL, " ");
     }
 
-    for (int j = 0; j < i; j++) {
-        printf("%d ", numbers[j]);
+    // for (int j = 0; j < i; j++) {
+    //     printf("%d ", numbers[j]);
+    // }
+    // printf("\n");
+
+    int is_increasing = 1;
+    int is_decreasing = 1;
+
+    for (int j = 0; j < i - 1; j++) {
+        int diff = numbers[j+1] - numbers[j];
+
+        if (diff > 3 || diff < -3 || diff == 0) {
+            return 1;
+        }
+
+        if (diff > 0) {
+            is_decreasing = 0;
+        } else {
+            is_increasing = 0;
+        }
     }
 
-    // printf("%s", lines);
-    printf("\n");
     free(token);
 
-    return 0;
+    return !(is_decreasing || is_increasing);
 }
 
 int main(void) {
