@@ -1,9 +1,12 @@
 #include <regex.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #define INPUT_FILE "input.txt"
+
+int mul(int a, int b) {
+    return a*b;
+}
 
 int main(void) {
     FILE *file = fopen(INPUT_FILE, "r");
@@ -25,31 +28,30 @@ int main(void) {
     char *search_position = buffer;
     regmatch_t match[1];
     int match_count = 0;
+    int total = 0;
 
     while (1) {
         ret = regexec(&regex, search_position, 1, match, 0);
+        char matched_str[20];
+
         if (ret == REG_NOMATCH) {
             break; // no more matches
         }
 
         int start = match[0].rm_so;
         int end = match[0].rm_eo;
+        snprintf(matched_str, end - start + 1, "%s", search_position + start);
+        /* printf("%s\n", matched_str); */
 
-        printf("%d: ",++match_count);
-        for (int i = start; i < end; i++) {
-            putchar(search_position[i]);
+        int a, b;
+        if (sscanf(matched_str, "mul(%d,%d)", &a, &b) == 2) {
+            total += mul(a,b);
         }
-        printf("\n");
-
-        size_t new_start = match[0].rm_eo;
-        memmove(buffer, buffer + new_start, strlen(buffer + new_start) + 1);
 
         search_position += match[0].rm_eo;
     } 
 
-    printf("total matches: %d", match_count);
-
-    /* printf("%s", buffer); */
+    printf("total: %d", total);
 
     regfree(&regex);
     free(buffer);
